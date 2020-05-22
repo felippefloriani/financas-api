@@ -54,11 +54,11 @@ private UsuarioRepository repository;
 	}
 
 	@Override
-	public Optional<Usuario> obterPorId(Long id) {
-		return repository.findById(id);
+	public Optional <Usuario> obterPorId(Long Id) {
+		
+		return repository.findById(Id);
 	}
 
-	
 	
 	
 	

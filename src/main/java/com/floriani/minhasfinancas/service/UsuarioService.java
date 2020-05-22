@@ -1,5 +1,6 @@
 package com.floriani.minhasfinancas.service;
 
+
 import java.util.Optional;
 
 import com.floriani.minhasfinancas.model.entity.Usuario;
@@ -12,6 +13,7 @@ public interface UsuarioService {
 	
 	void validarEmail(String email);
 	
-	Optional<Usuario> obterPorId(Long id);
+	Optional <Usuario> obterPorId(Long Id);
+	
 
 }

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.floriani.minhasfinancas.exceptions.RegraNegocioException;
 import com.floriani.minhasfinancas.model.entity.Lancamento;
 import com.floriani.minhasfinancas.model.enums.StatusLancamento;
+import com.floriani.minhasfinancas.model.enums.TipoLancamento;
 import com.floriani.minhasfinancas.model.repository.LancamentoRepository;
 import com.floriani.minhasfinancas.service.LancamentoService;
 
@@ -32,27 +33,24 @@ public class LancamentoServiceImpl  implements LancamentoService{
 	@Override
 	@Transactional
 	public Lancamento salvar(Lancamento lancamento) {
-		
-		Objects.requireNonNull(lancamento.getId());
-		
+		validar(lancamento);
+		lancamento.setStatus(StatusLancamento.PENDENTE);
 		return repository.save(lancamento);
 	}
 
 	@Override
 	@Transactional
 	public Lancamento atualizar(Lancamento lancamento) {
-		
+		Objects.requireNonNull(lancamento.getId());
+		validar(lancamento);
 		return repository.save(lancamento);
 	}
 
 	@Override
 	@Transactional
 	public void deletar(Lancamento lancamento) {
-		
 		Objects.requireNonNull(lancamento.getId());
-		
 		repository.delete(lancamento);
-		
 	}
 
 	@Override //Example é uma biblioteca do framework Spring
@@ -103,14 +101,26 @@ public class LancamentoServiceImpl  implements LancamentoService{
 
 	@Override
 	public Optional<Lancamento> obterPorId(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findById(id);
 	}
 
+	
 	@Override
+	@Transactional(readOnly = true)
 	public BigDecimal obterSaldoPorUsuario(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEusuario(id, TipoLancamento.RECEITA.name());
+		BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEusuario(id, TipoLancamento.DESPESA.name());
+		
+		if(receitas == null) {
+			receitas = BigDecimal.ZERO;	
+		}
+		
+		if (despesas == null) {
+			despesas = BigDecimal.ZERO;
+		}
+		
+		return receitas.subtract(despesas);
 	}
 	
 	
